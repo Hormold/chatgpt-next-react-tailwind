@@ -5,4 +5,21 @@
 export type MessageType = {
   role: "assistant" | "function" | "system" | "user";
   content: string;
+  name?: string;
 };
+
+export type ChatType = {
+  id: string;
+  title: string;
+}
+
+export type PostRequest = {
+  previousMessages: MessageType[];
+  content: string;
+}
+
+export type ChatOutput = {
+  id: string;
+  title: string;
+  messages: MessageType[];
+}

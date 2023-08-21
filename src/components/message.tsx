@@ -1,5 +1,6 @@
 import { MessageType } from "@/types";
-import { SparklesIcon, UserIcon } from "@heroicons/react/24/outline";
+import { UserIcon, CogIcon } from '@heroicons/react/24/outline'
+import ReactMarkdown from 'react-markdown'
 
 export type MessageProps = {
   /**
@@ -8,27 +9,37 @@ export type MessageProps = {
    */
   message: MessageType;
 };
+
+
 export const Message = (props: MessageProps) => {
   const { message } = props;
-
+  const isBot = message.role !== "user";
+  // ref is used to scroll to the last message
   return (
-    <div className="flex flex-row gap-4 p-2 first:rounded-t-md last:rounded-b-md text-black dark:text-white bg-white dark:bg-slate-800">
-      <div className="shrink">
-        {message.role === "user" ? (
-          <>
-            <span className="sr-only">Message from you</span>
-            <p className="text-gray-500 dark:text-gray-300">You</p>
-          </>
-        ) : (
-          <>
-            <span className="sr-only">Message from bot</span>
-            <p className="text-gray-500 dark:text-gray-300">Bot</p>
-          </>
-        )}
+    <div
+      ref={(el) => {
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+        }
+      }}
+      className={`py-5 text-white ${isBot?"dark:bg-[#434654] bg-[#bcb9ab]":"dark:bg-[#343541] bg-[#cbcabe]"}"`}>
+      <div className="flex space-x-5 px-10 w-full">
+        {isBot ? (
+            <span className="" style={{transform: "scaleX(-1)"}}>
+              <CogIcon className="h-8 w-8" />
+            </span>
+          ) : (
+            <span className="">
+              <UserIcon className="h-8 w-8 text-red-500 dark:text-red-300" />
+            </span>
+          )}
+        <div className="pt-1 text-sm">
+          {/* Add the `prose` class to render markdown as HTML + special markdown plugin to react */}
+          <ReactMarkdown className="prose dark:prose-invert prose-neutral whitespace-pre-wrap max-w-max" disallowedElements={['p']} unwrapDisallowed={true}>
+            {message.content}
+          </ReactMarkdown>
+        </div>
       </div>
-
-      {/* Maybe a non-plaintext format would be a bit nicer to read? */}
-      <p className="grow">{message.content}</p>
     </div>
   );
 };
